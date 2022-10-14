@@ -1,5 +1,6 @@
 # dripvsnodripinvesting
-A VERY simple graphing utility that shows the difference between reinvesting dividends into a stock vs taking it out. 
+A VERY simple graphing utility that shows the difference between reinvesting dividends into a stock vs taking it out. I also apologize for the messy nature of 
+this .py file, I would like to package them all into different classes, but I currently work 4 days a week with a full class schedule and I do not have time. 
 
 
 <h1>
