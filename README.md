@@ -56,7 +56,7 @@ This method takes the values stored in the ListTypes class to turn them into a g
 Contact info / Socials
 </h1>
 
-Email: trisstonprogramming@gmail.com
+Email: trisston.i28@gmail.com
 
 Twitter: https://twitter.com/Trisston_Ice
 
