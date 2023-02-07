@@ -17,6 +17,7 @@ import json
 import matplotlib as mpl
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 
 #A class to hold all data for the ticker
 class TickerData:
@@ -52,36 +53,49 @@ def main():
              [sg.Input()],
              [sg.Text("Enter Years Contributing")],
              [sg.Input()],
-             [sg.Button('Continue')] ]
+             [sg.Button('Continue')],
+             [sg.Button('Exit')]]
 
     window = sg.Window("Dividend Reinvestment", layout)
-    event, values = window.read()
-    
-    #Gathers info from user
-    msft = yf.Ticker(values[0])
-    contributions.startingContribution = float(values[1])
-    contributions.monthlyContribution = float(values[2])
-    contributions.yearsContributing = int(values[3])
-    
-    #Retrieves Ticker's information and stores neccessary values
-    stockStats = msft.stats()
+    while True:
+        event, values = window.read()
+        if event == 'Continue':
+            #Gathers info from user
+            msft = yf.Ticker(values[0])
+            contributions.startingContribution = float(values[1])
+            contributions.monthlyContribution = float(values[2])
+            contributions.yearsContributing = int(values[3])
+            
+            #Retrieves Ticker's information and stores neccessary values
+            stockStats = msft.stats()
 
-    tickerVal.currentDividend = stockStats.get("defaultKeyStatistics")['lastDividendValue']
-    tickerVal.stockPrice = stockStats.get("price")['regularMarketPrice']
-    tickerVal.dividendRate = stockStats.get("summaryDetail")['dividendRate']
+            tickerVal.currentDividend = stockStats.get("defaultKeyStatistics")['lastDividendValue']
+            tickerVal.stockPrice = stockStats.get("price")['regularMarketPrice']
+            tickerVal.dividendRate = stockStats.get("summaryDetail")['dividendRate']
 
-    #This is a rough calculation to determine how often dividends are distributed
-    #Accurate for test cases "O" and "PG" (12 and 4 respectively)
-    tickerVal.distributionsPerYear = round(tickerVal.dividendRate / tickerVal.currentDividend)
+            #This is a rough calculation to determine how often dividends are distributed
+            #Accurate for test cases "O" and "PG" (12 and 4 respectively)
+            tickerVal.distributionsPerYear = round(tickerVal.dividendRate / tickerVal.currentDividend)
 
-    lists.valueList = calculateReinvestment(tickerVal, contributions, lists)
-    lists.noReinValueList = calculateInvestment(tickerVal, contributions, lists)
-    for i in range(contributions.yearsContributing):
-        lists.timeList.append(i)
+            lists.valueList = calculateReinvestment(tickerVal, contributions, lists)
+            lists.noReinValueList = calculateInvestment(tickerVal, contributions, lists)
+            for i in range(contributions.yearsContributing):
+                lists.timeList.append(i)
+            
+            createGraph(lists, contributions)
+            lists.timeList.clear()
+            lists.valueList.clear()
+            lists.noReinValueList.clear()
+            
+            print("end")
+            
+        #Closes application if user exits
+        if event == sg.WIN_CLOSED or event == 'Exit':
+            window.Close()
+            sys.exit()
+            
     
-    createGraph(lists, contributions)
-    
-    print("end")
+
 
 def createGraph(lists, contributions):
     #Sets X and Y values according to calculations done to the data holding lists
@@ -93,7 +107,7 @@ def createGraph(lists, contributions):
     invInterest = invY[contributions.yearsContributing]
     del invY[contributions.yearsContributing]
     print(int(invInterest))
-    print( int(reinInterest))
+    print(int(reinInterest))
 
     graph, ax = plt.subplots()
 
