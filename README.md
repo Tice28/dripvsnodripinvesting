@@ -5,13 +5,6 @@ this .py file, I would like to package them all into different classes, but I cu
 <h1>WARNING</h1>
 Due to Yahoo data encryption changes, this project no longer functions. For more information see: https://pypi.org/project/yfinance/
 
-<h1>
-IMPORTANT
-  
-</h1>
-
-The math in this appears to be correct; however, I do not have the time to explicitly check every bit of it. It is a simple brute-force approach to calculating dividends. Also, I have limited time to work on this project and will be unlikely to make changes to it in the future. Feel free to take the project and modify it however you see fit. Also if you figure out something is wrong with it you can contact me through any of my accounts listed at the bottom. 
-
 <h2>
 Classes
 </h2>
