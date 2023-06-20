@@ -3,7 +3,7 @@ A VERY simple graphing utility that shows the difference between reinvesting div
 this .py file, I would like to package them all into different classes, but I currently work 4 days a week with a full class schedule and I do not have time. 
 
 <h1>WARNING</h1>
-Due to Yahoo data encryption changes, this project no longer functions. For more information see: <a href="https://pypi.org/project/yfinance/">
+Due to Yahoo data encryption changes, this project no longer functions. For more information see: https://pypi.org/project/yfinance/
 
 <h1>
 IMPORTANT
