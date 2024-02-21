@@ -61,17 +61,18 @@ def main():
         event, values = window.read()
         if event == 'Continue':
             #Gathers info from user
-            msft = yf.Ticker(values[0])
+            stock = yf.Ticker(values[0])
             contributions.startingContribution = float(values[1])
             contributions.monthlyContribution = float(values[2])
             contributions.yearsContributing = int(values[3])
             
             #Retrieves Ticker's information and stores neccessary values
-            stockStats = msft.stats()
-
-            tickerVal.currentDividend = stockStats.get("defaultKeyStatistics")['lastDividendValue']
-            tickerVal.stockPrice = stockStats.get("price")['regularMarketPrice']
-            tickerVal.dividendRate = stockStats.get("summaryDetail")['dividendRate']
+            stockStats = stock.info
+            #Gets yearly dividend rate needs to be divided by # of distributions per year
+            print(stockStats.get('dividendYield'));
+            tickerVal.currentDividend = stockStats.get('lastDividendValue')
+            tickerVal.stockPrice = stockStats.get('regularMarketOpen')
+            tickerVal.dividendRate = stockStats.get('dividendRate')
 
             #This is a rough calculation to determine how often dividends are distributed
             #Accurate for test cases "O" and "PG" (12 and 4 respectively)
@@ -177,5 +178,3 @@ def calculateInvestment(ticker, contributions, lists):
 
 #THE ACTUAL CALL TO MAIN THAT MAKES THIS EXECUTE
 main()
-    
-
