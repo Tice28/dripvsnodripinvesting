@@ -83,7 +83,7 @@ def main():
             for i in range(contributions.yearsContributing):
                 lists.timeList.append(i)
             
-            createGraph(lists, contributions)
+            createGraph(lists, contributions, values[0])
             lists.timeList.clear()
             lists.valueList.clear()
             lists.noReinValueList.clear()
@@ -98,7 +98,7 @@ def main():
     
 
 
-def createGraph(lists, contributions):
+def createGraph(lists, contributions, stock):
     #Sets X and Y values according to calculations done to the data holding lists
     yearsX = lists.timeList 
     reinY = lists.valueList
@@ -118,8 +118,8 @@ def createGraph(lists, contributions):
     ax.set_xlabel("Time")
     ax.set_ylabel("Total Value (USD)")
     ax.legend()
-    
-    graph.savefig("figure.pdf")
+
+    graph.savefig(f"ticker_{stock}_contributing_{contributions.monthlyContribution}_for_{contributions.yearsContributing}_years.pdf")
     graph.show()
 
 #Calculates reinvestment value of a stock
@@ -128,6 +128,7 @@ def calculateReinvestment(ticker, contributions, lists):
     j = 0
     totalValue = contributions.startingContribution
     totalInterest = 0.0
+    disributionPercentage = ticker.dividendRate / ticker.distributionsPerYear
     
     while(i < contributions.yearsContributing):
         while(j < 12):
@@ -135,12 +136,12 @@ def calculateReinvestment(ticker, contributions, lists):
                 #Calculates numbers of shares owned for dividend yield
                 ticker.sharesOwned = totalValue / ticker.stockPrice
                 #Calculates the dividend distribution based off number of shares owned
-                totalValue += (ticker.sharesOwned * (ticker.dividendRate / ticker.distributionsPerYear))
-                totalInterest += (ticker.sharesOwned * (ticker.dividendRate / ticker.distributionsPerYear))
+                totalValue += (ticker.sharesOwned * (disributionPercentage))
+                totalInterest += (ticker.sharesOwned * (disributionPercentage))
             elif(j % ticker.distributionsPerYear == 2 or j == 0):
                 ticker.sharesOwned = totalValue / ticker.stockPrice
-                totalValue += (ticker.sharesOwned * (ticker.dividendRate / ticker.distributionsPerYear))
-                totalInterest += (ticker.sharesOwned * (ticker.dividendRate / ticker.distributionsPerYear))
+                totalValue += (ticker.sharesOwned * (disributionPercentage))
+                totalInterest += (ticker.sharesOwned * (disributionPercentage))
             totalValue += contributions.monthlyContribution
             j += 1
         #Adds all values to array to be passed to graphing function
