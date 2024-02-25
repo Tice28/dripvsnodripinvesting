@@ -1,9 +1,9 @@
 """
 Author: Trisston Icenhower
 Program: Dividend Reinvestment Caculator
-Version: 1.0.0
+Version: 2.0.0
 Date: 7/8/2022
-Updated: 7/26/2022
+Updated: 02/25/2024
 
 Description: This app takes a specific ticker and a
              monthly investment amount and caculates
