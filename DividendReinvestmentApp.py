@@ -1,9 +1,9 @@
 """
 Author: Trisston Icenhower
 Program: Dividend Reinvestment Caculator
-Version: 1.0.0
+Version: 2.0.0
 Date: 7/8/2022
-Updated: 7/26/2022
+Updated: 02/25/2024
 
 Description: This app takes a specific ticker and a
              monthly investment amount and caculates
@@ -61,17 +61,18 @@ def main():
         event, values = window.read()
         if event == 'Continue':
             #Gathers info from user
-            msft = yf.Ticker(values[0])
+            stock = yf.Ticker(values[0])
             contributions.startingContribution = float(values[1])
             contributions.monthlyContribution = float(values[2])
             contributions.yearsContributing = int(values[3])
             
             #Retrieves Ticker's information and stores neccessary values
-            stockStats = msft.stats()
-
-            tickerVal.currentDividend = stockStats.get("defaultKeyStatistics")['lastDividendValue']
-            tickerVal.stockPrice = stockStats.get("price")['regularMarketPrice']
-            tickerVal.dividendRate = stockStats.get("summaryDetail")['dividendRate']
+            stockStats = stock.info
+            #Gets yearly dividend rate needs to be divided by # of distributions per year
+            print(stockStats.get('dividendYield'));
+            tickerVal.currentDividend = stockStats.get('lastDividendValue')
+            tickerVal.stockPrice = stockStats.get('regularMarketOpen')
+            tickerVal.dividendRate = stockStats.get('dividendRate')
 
             #This is a rough calculation to determine how often dividends are distributed
             #Accurate for test cases "O" and "PG" (12 and 4 respectively)
@@ -82,7 +83,7 @@ def main():
             for i in range(contributions.yearsContributing):
                 lists.timeList.append(i)
             
-            createGraph(lists, contributions)
+            createGraph(lists, contributions, values[0])
             lists.timeList.clear()
             lists.valueList.clear()
             lists.noReinValueList.clear()
@@ -97,7 +98,7 @@ def main():
     
 
 
-def createGraph(lists, contributions):
+def createGraph(lists, contributions, stock):
     #Sets X and Y values according to calculations done to the data holding lists
     yearsX = lists.timeList 
     reinY = lists.valueList
@@ -117,8 +118,8 @@ def createGraph(lists, contributions):
     ax.set_xlabel("Time")
     ax.set_ylabel("Total Value (USD)")
     ax.legend()
-    
-    graph.savefig("figure.pdf")
+
+    graph.savefig(f"ticker_{stock}_contributing_{contributions.monthlyContribution}_for_{contributions.yearsContributing}_years.pdf")
     graph.show()
 
 #Calculates reinvestment value of a stock
@@ -127,6 +128,7 @@ def calculateReinvestment(ticker, contributions, lists):
     j = 0
     totalValue = contributions.startingContribution
     totalInterest = 0.0
+    disributionPercentage = ticker.dividendRate / ticker.distributionsPerYear
     
     while(i < contributions.yearsContributing):
         while(j < 12):
@@ -134,12 +136,12 @@ def calculateReinvestment(ticker, contributions, lists):
                 #Calculates numbers of shares owned for dividend yield
                 ticker.sharesOwned = totalValue / ticker.stockPrice
                 #Calculates the dividend distribution based off number of shares owned
-                totalValue += (ticker.sharesOwned * (ticker.dividendRate / ticker.distributionsPerYear))
-                totalInterest += (ticker.sharesOwned * (ticker.dividendRate / ticker.distributionsPerYear))
+                totalValue += (ticker.sharesOwned * (disributionPercentage))
+                totalInterest += (ticker.sharesOwned * (disributionPercentage))
             elif(j % ticker.distributionsPerYear == 2 or j == 0):
                 ticker.sharesOwned = totalValue / ticker.stockPrice
-                totalValue += (ticker.sharesOwned * (ticker.dividendRate / ticker.distributionsPerYear))
-                totalInterest += (ticker.sharesOwned * (ticker.dividendRate / ticker.distributionsPerYear))
+                totalValue += (ticker.sharesOwned * (disributionPercentage))
+                totalInterest += (ticker.sharesOwned * (disributionPercentage))
             totalValue += contributions.monthlyContribution
             j += 1
         #Adds all values to array to be passed to graphing function
@@ -177,5 +179,3 @@ def calculateInvestment(ticker, contributions, lists):
 
 #THE ACTUAL CALL TO MAIN THAT MAKES THIS EXECUTE
 main()
-    
-
